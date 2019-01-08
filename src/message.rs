@@ -303,7 +303,7 @@ impl Broken {
 }
 
 /// A trick to easily deserialize and detect valid JSON, but invalid Message.
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(untagged)]
 pub(crate) enum WireMessage {
     Message(Message),
@@ -311,6 +311,7 @@ pub(crate) enum WireMessage {
 }
 
 pub(crate) fn decoded_to_parsed(res: JsonResult<WireMessage>) -> Parsed {
+    println!("decoded_to_parsed {:?}", res);
     match res {
         Ok(WireMessage::Message(Message::UnmatchedSub(value))) => Err(Broken::Unmatched(value)),
         Ok(WireMessage::Message(m)) => Ok(m),
@@ -332,6 +333,7 @@ pub fn from_slice(s: &[u8]) -> Parsed {
 ///
 /// Invalid JSON or JSONRPC messages are reported as [Broken](enum.Broken.html).
 pub fn from_str(s: &str) -> Parsed {
+    println!("Received {:?}", s);
     from_slice(s.as_bytes())
 }
 
